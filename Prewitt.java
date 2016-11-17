@@ -11,7 +11,6 @@ public class Prewitt extends nuanceGris implements usage{
 
     private nuanceGris img;
     private nuanceGris imgCopy;
-    private String path;
     private double prewitt_x[][] = {{-1, 0, 1},
                                     {-1, 0, 1},
                                     {-1, 0, 1}};
@@ -21,10 +20,10 @@ public class Prewitt extends nuanceGris implements usage{
 
     public Prewitt() {}
 
-    public Prewitt(File image, String Path) throws IOException {
+
+    public Prewitt(File image) throws IOException{
         img = new nuanceGris(image);
         imgCopy = new nuanceGris(image);
-        path = Path;
     }
 
     public void filtrePrewitt() throws IOException {
@@ -74,7 +73,7 @@ public class Prewitt extends nuanceGris implements usage{
                 this.imgCopy.img.setRGB(i,j,couleur);
             }
         }
-        ImageIO.write(this.imgCopy.img, "png",new File(new_name(this.path,"prewitt")));
+        //ImageIO.write(this.imgCopy.img, "png",new File(new_name(this.path,"prewitt")));
     }
 
     public double pixelX(double x[][], double y[][], BufferedImage img, int i, int j) {
@@ -97,5 +96,13 @@ public class Prewitt extends nuanceGris implements usage{
         String[] tmp = name_file.split("[.]");
         String newName = tmp[0] + "_" + filtre + "." + tmp[1];
         return newName;
+    }
+
+    public BufferedImage getImg() {
+        return this.img.img;
+    }
+
+    public BufferedImage getImgCopy() {
+        return this.imgCopy.img;
     }
 }

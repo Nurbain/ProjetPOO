@@ -17,6 +17,10 @@ public class nuanceGris {
         this.img = ImageIO.read(image);
     }
 
+    public nuanceGris(BufferedImage image) throws IOException{
+        this.img = image;
+    }
+
     public void niveauGris() throws IOException {
         for (int i = 0; i < this.img.getWidth(); i++) {
             for (int j = 0; j < this.img.getHeight(); j++) {

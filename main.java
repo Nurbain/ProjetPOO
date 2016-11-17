@@ -12,11 +12,15 @@ public class main {
 
         JFileChooser chooser = new JFileChooser();
         File curFile;
-        chooser.showOpenDialog(null);
+        int rec = chooser.showOpenDialog(null);
+        if ( rec != JFileChooser.APPROVE_OPTION )
+            System.exit(0);
+
         curFile = chooser.getSelectedFile();
         String file = curFile.getAbsolutePath();
-        System.out.println(file);
-        Prewitt t = new Prewitt(curFile, file);
-        t.filtrePrewitt();
+        Sobel t = new Sobel(curFile);
+        t.filtreSobel();
+
+        ZFenetre f = new ZFenetre(curFile, t.getImgCopy());
     }
 }
