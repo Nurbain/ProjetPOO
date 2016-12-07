@@ -4,13 +4,12 @@
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.JLabel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.awt.image.BufferedImage;
-
 
 
 public class ZFenetre extends JFrame {
@@ -26,6 +25,8 @@ public class ZFenetre extends JFrame {
 
     private JCheckBoxMenuItem filtreS = new JCheckBoxMenuItem("Sobel");
     private JCheckBoxMenuItem filtreP = new JCheckBoxMenuItem("Prewitt");
+    private JCheckBoxMenuItem filtreR = new JCheckBoxMenuItem("Roberts");
+    private JCheckBoxMenuItem filtreV = new JCheckBoxMenuItem("Vectorisation");
 
     private JRadioButtonMenuItem int1 = new JRadioButtonMenuItem("100");
     private JRadioButtonMenuItem int2 = new JRadioButtonMenuItem("90");
@@ -45,6 +46,7 @@ public class ZFenetre extends JFrame {
     //Permet de retenir le filtre utilisé actuellement
     private String filtreActuel;
     private File curFile;
+    private BufferedImage imgFiltre;
 
     public void setIntensite(JRadioButtonMenuItem Jb) {
         int1.setSelected(false);
@@ -64,22 +66,123 @@ public class ZFenetre extends JFrame {
     public void setFiltre(JCheckBoxMenuItem Jb) {
         filtreS.setSelected(false);
         filtreP.setSelected(false);
+        filtreR.setSelected(false);
+        filtreV.setSelected(false);
         Jb.setSelected(true);
     }
 
-    public ZFenetre(File curFile, BufferedImage imgFiltre) throws IOException{
+    public void switch_img() throws IOException{
+        switch (filtreActuel) {
+            case "Sobel":
+                Sobel t = new Sobel(this.curFile);
+                t.filtreSobel();
+                filtreActuel = "Roberts";
+                this.imgFiltre = t.getImgCopy();
+                setFiltre(filtreS);
+                break;
 
-        this.curFile = curFile;
-        filtreActuel = "Sobel";
+            case "Prewitt":
+                Prewitt p = new Prewitt(this.curFile);
+                p.filtrePrewitt();
+                filtreActuel = "Roberts";
+                this.imgFiltre = p.getImgCopy();
+                setFiltre(filtreP);
+                break;
+
+            case "Roberts":
+                rob r = new rob(this.curFile);
+                r.filtrerobert();
+                filtreActuel = "Roberts";
+                this.imgFiltre = r.getImgCopy();
+                setFiltre(filtreR);
+                break;
+
+            case "Vectorisation":
+                vect v = new vect(this.curFile);
+                v.vectoristation();
+                filtreActuel = "Roberts";
+                this.imgFiltre = v.getImgCopy();
+                setFiltre(filtreV);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public ZFenetre(File file) throws IOException {
+
+        curFile = file;
         setTitle("Projet BOUYA");
+
+        //Ajout d'une favicon
+        File tmp = new File("favicon.jpg");
+        Image favicon = ImageIO.read(tmp);
+        this.setIconImage((Image) favicon);
         pan = new JPanel();
+
+        //Gestion fenetre choix filtre au lancement
+        String[] filtre = {"Sobel", "Prewitt", "Roberts", "Vectorisation"};
+
+        JOptionPane jop = new JOptionPane(), jop2 = new JOptionPane();
+
+        String nom = (String)jop.showInputDialog(null,
+                "Veuillez indiquer le filtre à utiliser.",
+                "Choix du filtre",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                filtre,
+                filtre[0]);
+        filtreActuel = nom;
+
+        switch(filtreActuel) {
+            case "Sobel": Sobel t = new Sobel(this.curFile);
+                            t.filtreSobel();
+                            filtreActuel = "Roberts";
+                            this.imgFiltre = t.getImgCopy();
+                            setFiltre(filtreS);
+                            break;
+
+            case "Prewitt": Prewitt p = new Prewitt(this.curFile);
+                            p.filtrePrewitt();
+                            filtreActuel = "Roberts";
+                            this.imgFiltre = p.getImgCopy();
+                            setFiltre(filtreP);
+                            break;
+
+            case "Roberts": rob r = new rob(this.curFile);
+                            r.filtrerobert();
+                            filtreActuel = "Roberts";
+                            this.imgFiltre = r.getImgCopy();
+                            setFiltre(filtreR);
+                            break;
+
+            case "Vectorisation": vect v = new vect(this.curFile);
+                                    v.vectoristation();
+                                    filtreActuel = "Roberts";
+                                    this.imgFiltre = v.getImgCopy();
+                                    setFiltre(filtreV);
+                                    item3.setEnabled(false);
+                                    break;
+
+            default: break;
+        }
+
         ImageIcon icon = new ImageIcon(imgFiltre);
 
+        Image img_tmp = icon.getImage();
+        Graphics2D g = (Graphics2D) img_tmp.getGraphics();
         img = new JLabel(icon);
+        if (icon.getIconWidth() < 600 && icon.getIconHeight() < 600) {
+            setSize(icon.getIconWidth() + 20, icon.getIconHeight() + 80);
+        }
+        else {
+            setSize(600, 600);
+            pan.setSize(600,600);
+        }
         pan.add(img);
-
         setContentPane(pan);
-        setSize(icon.getIconWidth() + 20, icon.getIconHeight() + 65);
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         //On initialise nos menus
@@ -88,11 +191,14 @@ public class ZFenetre extends JFrame {
 
         //On ajoute les éléments dans notre sous-menu
 
-        filtreS.setSelected(true);
         test2_1.add(filtreS);
         test2_1.add(filtreP);
+        test2_1.add(filtreR);
+        test2_1.add(filtreV);
 
+        //Par défaut
         int1.setSelected(true);
+
         test2_2.add(int1);
         test2_2.add(int2);
         test2_2.add(int3);
@@ -112,7 +218,7 @@ public class ZFenetre extends JFrame {
         test1.addSeparator();
 
         //Gestion "fermer"
-        item2.addActionListener(new ActionListener(){
+        item2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 System.exit(0);
             }
@@ -120,7 +226,7 @@ public class ZFenetre extends JFrame {
 
         //Gestion "Enregistrer sous..."
         item3.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0){
+            public void actionPerformed(ActionEvent arg0) {
                 JOptionPane jop = new JOptionPane();
                 String nom = jop.showInputDialog(null, "Nom de l'image", "Enregistrer sous", JOptionPane.QUESTION_MESSAGE);
                 System.out.println("Nom: <" + nom + ">");
@@ -140,56 +246,116 @@ public class ZFenetre extends JFrame {
 
 
         //Gestion "ouvrir"
-        item1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e){
-                JFileChooser chooser = new JFileChooser();
-                File curFile;
-                int rec = chooser.showOpenDialog(null);
-                if ( rec != JFileChooser.APPROVE_OPTION ) {
-                    System.out.println("Ouverture fichier annulée.");
-                    return;
-                }
+        item1.addActionListener( e-> {
 
-                curFile = chooser.getSelectedFile();
-                String file = curFile.getAbsolutePath();
+            JFileChooser chooser = new JFileChooser();
 
-                if (filtreActuel == "Sobel") {
-                    try {
-                        Sobel t = new Sobel(curFile);
-                        t.filtreSobel();
-                        pan.remove(img);
-                        img = new JLabel(new ImageIcon(t.getImgCopy()));
-                        pan.add(img);
-                    } catch (IOException ex) {}
-                    System.out.println("Image chargée.");
-                }
-                else  if (filtreActuel == "Prewitt") {
-                    try {
-                        Prewitt t = new Prewitt(curFile);
-                        t.filtrePrewitt();
-                        pan.remove(img);
-                        img = new JLabel(new ImageIcon(t.getImgCopy()));
-                        pan.add(img);
-                    } catch (IOException ex) {}
-                    System.out.println("Image chargée.");
-                }
-
-
+            int rec = chooser.showOpenDialog(null);
+            if (rec != JFileChooser.APPROVE_OPTION) {
+                System.out.println("Ouverture fichier annulée.");
+                return;
             }
+            this.curFile = chooser.getSelectedFile();
+
+            switch(filtreActuel) {
+                case "Sobel":
+                    Sobel t = null;
+                    try {
+                        t = new Sobel(this.curFile);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    try {
+                        t.filtreSobel();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    filtreActuel = "Sobel";
+                    this.imgFiltre = t.getImgCopy();
+                    setFiltre(filtreS);
+                    item3.setEnabled(true);
+                    img = new JLabel(new ImageIcon(t.getImgCopy()));
+                    break;
+
+                case "Prewitt":
+                    Prewitt p = null;
+                    try {
+                        p = new Prewitt(this.curFile);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    try {
+                        p.filtrePrewitt();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    filtreActuel = "Prewitt";
+                    this.imgFiltre = p.getImgCopy();
+                    setFiltre(filtreP);
+                    item3.setEnabled(true);
+                    img = new JLabel(new ImageIcon(p.getImgCopy()));
+                    break;
+
+                case "Roberts":
+                    rob r = null;
+                    try {
+                        r = new rob(this.curFile);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    try {
+                        r.filtrerobert();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    filtreActuel = "Roberts";
+                    this.imgFiltre = r.getImgCopy();
+                    setFiltre(filtreR);
+                    item3.setEnabled(true);
+                    img = new JLabel(new ImageIcon(r.getImgCopy()));
+                    break;
+
+                case "Vectorisation":
+                    vect v = null;
+                    try {
+                        v = new vect(this.curFile);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    try {
+                        v.vectoristation();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    filtreActuel = "Vectorisation";
+                    this.imgFiltre = v.getImgCopy();
+                    setFiltre(filtreV);
+                    item3.setEnabled(false);
+                    img = new JLabel(new ImageIcon(v.getImgCopy()));
+                    break;
+
+                default: break;
+            }
+            pan.removeAll();
+            pan.add(img);
+            pan.updateUI();
         });
 
         //Gestion des filtres
         filtreS.addActionListener(e -> {
             System.out.println("Modification du filtre...");
+
             try {
+                pan.removeAll();
                 Sobel t = new Sobel(this.curFile);
                 t.filtreSobel();
-                pan.remove(img);
                 img = new JLabel(new ImageIcon(t.getImgCopy()));
                 pan.add(img);
+                pan.updateUI();
                 this.filtreActuel = "Sobel";
                 setFiltre(filtreS);
+                item3.setEnabled(true);
+                System.out.println("Filtre modifié. Filtre actuel : Sobel.");
             } catch (IOException ex) {
                 ex.printStackTrace();
                 System.out.println("Erreur modification filtre. Abandon.");
@@ -200,15 +366,60 @@ public class ZFenetre extends JFrame {
         filtreP.addActionListener(e -> {
             System.out.println("Modification du filtre...");
             try {
+                pan.removeAll();
                 Prewitt t = new Prewitt(this.curFile);
                 t.filtrePrewitt();
-                pan.remove(img);
                 img = new JLabel(new ImageIcon(t.getImgCopy()));
                 pan.add(img);
+                pan.updateUI();
                 this.filtreActuel = "Prewitt";
                 setFiltre(filtreP);
+                item3.setEnabled(true);
+                System.out.println("Filtre modifié. Filtre actuel : Prewitt.");
             } catch (IOException e1) {
                 e1.printStackTrace();
+                System.out.println("Erreur modification filtre. Abandon.");
+                return;
+            }
+        });
+
+        filtreR.addActionListener(e -> {
+            System.out.println("Modification du filtre...");
+
+            try {
+                pan.remove(this.img);
+                rob t = new rob(this.curFile);
+                t.filtrerobert();
+                img = new JLabel(new ImageIcon(t.getImgCopy()));
+                pan.add(img);
+                pan.updateUI();
+                this.filtreActuel = "Roberts";
+                setFiltre(filtreR);
+                item3.setEnabled(true);
+                System.out.println("Filtre modifié. Filtre actuel : Roberts.");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                System.out.println("Erreur modification filtre. Abandon.");
+                return;
+            }
+        });
+
+        filtreV.addActionListener(e -> {
+            System.out.println("Modification du filtre...");
+
+            try {
+                pan.removeAll();
+                vect t = new vect(this.curFile);
+                t.vectoristation();
+                img = new JLabel(new ImageIcon(t.getImgCopy()));
+                pan.add(img);
+                pan.updateUI();
+                this.filtreActuel = "Vectorisation";
+                setFiltre(filtreV);
+                item3.setEnabled(false);
+                System.out.println("Filtre modifié. Filtre actuel : Vectorisation.");
+            } catch (IOException ex) {
+                ex.printStackTrace();
                 System.out.println("Erreur modification filtre. Abandon.");
                 return;
             }
@@ -257,28 +468,19 @@ public class ZFenetre extends JFrame {
             setIntensite(int8);
         });
 
-        int9.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        int9.addActionListener(e-> {
                 System.out.println("int9");
                 setIntensite(int9);
-            }
         });
 
-        int10.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        int10.addActionListener(e-> {
                 System.out.println("int10");
                 setIntensite(int10);
-            }
         });
 
-        int11.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        int11.addActionListener(e-> {
                 System.out.println("int11");
                 setIntensite(int11);
-            }
         });
 
         test1.add(item2);

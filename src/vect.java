@@ -15,11 +15,6 @@ public class vect extends Sobel implements usage
 
     public vect() {}
 
-    public vect(File image, String Path) throws IOException{
-        img = new Sobel(image);
-        //path = Path;
-    }
-
     public vect(File image) throws IOException{
         img = new Sobel(image);
     }
@@ -32,27 +27,27 @@ public class vect extends Sobel implements usage
         switch(dir)
         {
             case 1 :
-                    while(i<imgmodif.getWidth()-1 && imgmodif.getRGB(i+1, y) == Color.white.getRGB() )
-                    {
-                        if(i!=x){
+                while(i<imgmodif.getWidth()-1 && imgmodif.getRGB(i+1, y) == Color.white.getRGB() )
+                {
+                    if(i!=x){
                         imgmodif.setRGB(i,y,Color.BLACK.getRGB());}
-                        i++;
-                    }
-                    if(i!=x) {
-                        segment v1 = new segment(x, y, i, y);
-                        this.listvect.add(v1);
-                    }
+                    i++;
+                }
+                if(i!=x) {
+                    segment v1 = new segment(x, y, i, y);
+                    this.listvect.add(v1);
+                }
 
-                    //this.segment[this.max]=p1;
-                    //this.segment[this.max][1]= new point(i,y);
-                    //this.max++;
-                    break;
+                //this.segment[this.max]=p1;
+                //this.segment[this.max][1]= new point(i,y);
+                //this.max++;
+                break;
 
             case 2 :
                 while(i<imgmodif.getWidth()-1 && j<imgmodif.getHeight()-1 && imgmodif.getRGB(i+1, j+1) == Color.white.getRGB() )
                 {
                     if(i!=x && j!=y){
-                    imgmodif.setRGB(i,j,Color.BLACK.getRGB());}
+                        imgmodif.setRGB(i,j,Color.BLACK.getRGB());}
                     i++;
                     j++;
 
@@ -68,7 +63,7 @@ public class vect extends Sobel implements usage
                 while(j<imgmodif.getHeight()-1 && imgmodif.getRGB(x, j+1) == Color.white.getRGB() )
                 {
                     if(j!=y){
-                    imgmodif.setRGB(x,j,Color.BLACK.getRGB());}
+                        imgmodif.setRGB(x,j,Color.BLACK.getRGB());}
                     j++;
                 }
                 if(j!=y) {
@@ -82,7 +77,7 @@ public class vect extends Sobel implements usage
                 while(i>=1 && j<imgmodif.getHeight()-1 && imgmodif.getRGB(i-1, j+1) == Color.white.getRGB() )
                 {
                     if(i!=x && j!=y){
-                    imgmodif.setRGB(i,j,Color.BLACK.getRGB());}
+                        imgmodif.setRGB(i,j,Color.BLACK.getRGB());}
                     i--;
                     j++;
                 }
@@ -171,9 +166,6 @@ public class vect extends Sobel implements usage
 
         bw.write("</svg>");
         bw.close();
-
-
-
 
         return copyvect;
     }

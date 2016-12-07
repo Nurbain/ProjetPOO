@@ -10,8 +10,6 @@ public interface usage {
 
     double pixelY(double x[][], double y[][], BufferedImage img, int i, int j);
 
-    String new_name(String name_file, String filtre);
-
     BufferedImage getImg();
 
     BufferedImage getImgCopy();
