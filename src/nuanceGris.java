@@ -1,16 +1,15 @@
 /**
- * Created by Stery on 14/11/2016.
+ * Fichier comportant toutes les fonctions pour effectuer une image en nuance de gris à partir de l'image source.
+ * @author Matthieu LEON et Nathan URBAIN
+ *
  */
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import static java.lang.Integer.max;
 
 public class nuanceGris {
     public BufferedImage img;
@@ -18,15 +17,21 @@ public class nuanceGris {
     public nuanceGris() {
     }
 
+    /**
+     * Constructeur à partir d'un fichier image.
+     * @param image
+     *  File contenant l'image source.
+     * @throws IOException Pour l'ouverture de l'image
+     */
     public nuanceGris(File image) throws IOException {
         this.img = ImageIO.read(image);
     }
 
-    public nuanceGris(BufferedImage image) throws IOException {
-        this.img = image;
-    }
 
-
+    /**
+     * Fonction effectuant la nuance de Gris sur 'img'
+     * @throws IOException Pour l'ouverture de l'image
+     */
     public void niveauGris() throws IOException {
         for (int i = 0; i < this.img.getWidth(); i++) {
             for (int j = 0; j < this.img.getHeight(); j++) {
@@ -45,8 +50,5 @@ public class nuanceGris {
                 this.img.setRGB(i, j, couleur);
             }
         }
-
     }
-
-
 }

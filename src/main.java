@@ -1,5 +1,7 @@
 /**
- * Created by Stery on 14/11/2016.
+ * Fichier main permettant de choisir un fichier et lancer l'affichage du programme.
+ *
+ * @author Matthieu LEON et Nathan URBAIN
  */
 
 import javax.swing.*;
@@ -17,8 +19,6 @@ public class main {
             System.exit(0);
 
         curFile = chooser.getSelectedFile();
-        //rob t = new rob(curFile);
-        //t.filtrerobert();
 
         ZFenetre f = new ZFenetre(curFile);
     }

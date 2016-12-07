@@ -4,22 +4,51 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * Created by Nathan on 28/11/2016.
+ * Fichier contenant les fonctions nécéssaires à la vectorisation d'une image.
+ *
+ * @author Matthieu LEON et Nathan URBAIN
+ *
+ * @see Sobel
+ * @see usage
  */
 
-public class vect extends Sobel implements usage
-{
+public class vect extends Sobel implements usage {
 
     public Sobel img;
     public ArrayList<segment> listvect = new ArrayList();;
 
+    /**
+     * Constructeur vect
+     */
     public vect() {}
 
+    /**
+     * Constructeur vect à partir d'un FILE correspondant à l'image cible.
+     *
+     * @param image
+     *              File image correspondant à l'image cible.
+     * @throws IOException Pour l'ouverture de l'image
+     */
     public vect(File image) throws IOException{
         img = new Sobel(image);
     }
 
     //Direction 1- 2\ 3| 4/
+
+    /**
+     * Fonction qui regarde dans une directions autour du pixel en argument pour essayer de trouver des segments.
+     *
+     * @param x
+     *             Position X du pixel
+     * @param y
+     *             Position Y du pixel
+     * @param dir
+     *              Direction dans laquelle la fonction doit regarder s'il y a un segment.
+     * @param imgmodif
+     *              Copie de l'image cible.
+     * @return
+     *              Renvoie l'image modifiée avec un nouveau segment.
+     */
     public BufferedImage  parcours (int x , int y ,int dir, BufferedImage imgmodif)
     {
         int i=x;
@@ -93,6 +122,14 @@ public class vect extends Sobel implements usage
     }
 
 
+    /**
+     * Fonction permettant de modifier le seuil d'une image.
+     * @param image
+     *              Image à modifier.
+     * @return
+     *              Image dont le seuil à été modifiée.
+     * @throws IOException Pour l'ouverture de l'image
+     */
     public BufferedImage seuil(BufferedImage image)throws IOException {
 
         for (int i = 0; i < image.getWidth() - 1; i++) {
@@ -113,6 +150,12 @@ public class vect extends Sobel implements usage
         return image;
     }
 
+    /**
+     * Fonction principale de la vectorisation.
+     * @return
+     *              Renvoie l'image vectorisée
+     * @throws IOException Pour l'ouverture de l'image
+     */
     public BufferedImage vectoristation() throws IOException {
 
         img.filtreSobel();
@@ -170,6 +213,17 @@ public class vect extends Sobel implements usage
         return copyvect;
     }
 
+    /***
+     * Permet de renvoyer l'image source.
+     * @return
+     *              Renvoie l'image source.
+     */
     public BufferedImage getImg() {return this.img.getImg();}
+
+    /**
+     * Permet de renvoyer l'image modifiée.
+     * @return
+     *  Renvoie l'image modifiée.
+     */
     public BufferedImage getImgCopy() {return this.img.getImgCopy();}
 }

@@ -1,7 +1,3 @@
-/**
- * Created by Stery on 15/11/2016.
- */
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +7,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-
+/**
+ * Classe ZFenetre qui permet de créer et gérer tout l'affichage du programme.
+ *
+ * @author Matthieu LEON et Nathan URBAIN
+ */
 public class ZFenetre extends JFrame {
     private JMenuBar menuBar = new JMenuBar();
     private JMenu test1 = new JMenu("Fichier");
@@ -63,6 +63,12 @@ public class ZFenetre extends JFrame {
         Jb.setSelected(true);
     }
 
+    /**
+     * Selectionne le bon filtre dans le JMenuItem 'filtre'
+     *
+     * @param Jb
+     *          Correspond au JCheckBoxMenuItem qui a été coché.
+     */
     public void setFiltre(JCheckBoxMenuItem Jb) {
         filtreS.setSelected(false);
         filtreP.setSelected(false);
@@ -71,45 +77,14 @@ public class ZFenetre extends JFrame {
         Jb.setSelected(true);
     }
 
-    public void switch_img() throws IOException{
-        switch (filtreActuel) {
-            case "Sobel":
-                Sobel t = new Sobel(this.curFile);
-                t.filtreSobel();
-                filtreActuel = "Roberts";
-                this.imgFiltre = t.getImgCopy();
-                setFiltre(filtreS);
-                break;
-
-            case "Prewitt":
-                Prewitt p = new Prewitt(this.curFile);
-                p.filtrePrewitt();
-                filtreActuel = "Roberts";
-                this.imgFiltre = p.getImgCopy();
-                setFiltre(filtreP);
-                break;
-
-            case "Roberts":
-                rob r = new rob(this.curFile);
-                r.filtrerobert();
-                filtreActuel = "Roberts";
-                this.imgFiltre = r.getImgCopy();
-                setFiltre(filtreR);
-                break;
-
-            case "Vectorisation":
-                vect v = new vect(this.curFile);
-                v.vectoristation();
-                filtreActuel = "Roberts";
-                this.imgFiltre = v.getImgCopy();
-                setFiltre(filtreV);
-                break;
-
-            default:
-                break;
-        }
-    }
-
+    /**
+     * Constructeur pour créer et afficher la fenêtre principale du programme.
+     * Va permettre de gérer l'ouverture d'un nouveau fichier, l'enregistrement, le changement de filtre.
+     *
+     * @param file
+     *          Fichier contenant l'image cible.
+     * @throws IOException Pour l'ouverture de l'image
+     */
     public ZFenetre(File file) throws IOException {
 
         curFile = file;
