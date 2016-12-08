@@ -71,7 +71,7 @@ public class vectnaive extends Sobel implements usage {
      * @return
      *              Renvoie l'image modifiée avec un nouveau segment.
      */
-    public void  parcours (point p ,int dir, BufferedImage imgmodif)
+    public void  parcours (point p , int dir, BufferedImage imgmodif)
     {
         point p2 = new point(p.x,p.y);
         switch(dir)

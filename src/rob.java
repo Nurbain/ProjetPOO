@@ -2,7 +2,6 @@ import java.awt.*;
 import java.io.*;
 import java.awt.image.*;
 
-
 public class rob extends nuanceGris implements usage {
 
     private nuanceGris img;

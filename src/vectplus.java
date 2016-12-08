@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author Matthieu LEON et Nathan URBAIN
  */
 
-public class vectplus {
+public class vectplus extends segment implements usage{
     public Sobel img;
     public ArrayList<segment> listvect = new ArrayList();;
     private int min = 3;
@@ -297,6 +297,44 @@ public class vectplus {
         bw.close();
 
         return copyvect;
+    }
+
+    /**
+     * Fonction inutile ici.
+     *
+     * @param x
+     *  Matrice de convolution en x
+     * @param y
+     *  Matrice de convolution en y
+     * @param img
+     *  Image dont les couleurs des pixels vont être récupérées.
+     * @param i
+     *  Pixel qui a comme position x i
+     * @param j
+     *  Pixel qui a comme position y j
+     * @return
+     */
+    public double pixelX(double[][] x, double[][] y, BufferedImage img, int i, int j) {
+        return 0;
+    }
+
+    /**
+     *  Fonction inutile ici.
+     *
+     * @param x
+     *  Matrice de convolution en x
+     * @param y
+     *  Matrice de convolution en y
+     * @param img
+     *  Image dont les couleurs des pixels vont être récupérées.
+     * @param i
+     *  Pixel qui a comme position x i
+     * @param j
+     *  Pixel qui a comme position y j
+     * @return
+     */
+    public double pixelY(double[][] x, double[][] y, BufferedImage img, int i, int j) {
+        return 0;
     }
 
     /***
