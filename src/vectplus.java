@@ -275,7 +275,7 @@ public class vectplus {
 
         //Ecriture fichier .svg
 
-        File image = new File("ptsmodif.svg");
+        File image = new File("vecto_plus.svg");
 
         if(!image.exists())
         {

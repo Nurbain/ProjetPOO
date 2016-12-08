@@ -203,7 +203,7 @@ public class vectnaive extends Sobel implements usage {
         }
 
 
-        File image = new File("test.svg");
+        File image = new File("vecto_naive.svg");
 
         if(!image.exists())
         {
