@@ -7,13 +7,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Created by Nathan on 08/12/2016.
+ * Classe vectplus qui permet de faire une vectorisation moins naive d'une image
+ *
+ * @author Matthieu LEON et Nathan URBAIN
  */
+
 public class vectplus {
     public Sobel img;
     public ArrayList<segment> listvect = new ArrayList();;
     private int min = 3;
-    private point test;
+    private point ptsmodif;
     /**
      * Constructeur vect
      */
@@ -31,7 +34,7 @@ public class vectplus {
     }
 
     /**
-     * FOnction qui calcule la pente entre 2 points x y et i j
+     * Fonction qui calcule la pente entre 2 points x y et i j
      * @param p
      *          point representant le pixel p
      * @param p2
@@ -45,17 +48,28 @@ public class vectplus {
     }
 
 
+
+    /**
+     * Fonction qui regarde si le nouveau point potentiellement ajouté au segment ne devie pas trop le segement initial
+     * cette deviation est calculé grace au coefficiant de droite
+     * @param s
+     *          point representant le pixel p
+     * @param img
+     *          Image a modifié
+     * @return
+     *         Modifie le segement initiale
+     */
     public void suitvec (segment s , BufferedImage img) {
         double coef = getCoef(s.p1, s.p2);
-        double testcoef;
+        double ptsmodifcoef;
         double mini = 3. / 4.;
         double max = 5. / 4.;
         double res;
         //direction ----------
         if (s.p2.x + 1<img.getWidth() && img.getRGB(s.p2.x + 1, s.p2.y) == Color.white.getRGB()) {
             point t = new point(s.p2.x + 1, s.p2.y);
-            testcoef = getCoef(s.p1, t);
-            res = testcoef / coef;
+            ptsmodifcoef = getCoef(s.p1, t);
+            res = ptsmodifcoef / coef;
             if (res > mini && res < max) {
                 img.setRGB(s.p2.x + 1, s.p2.y, Color.BLACK.getRGB());
                 s.p2 = t;
@@ -65,8 +79,8 @@ public class vectplus {
         //Direction \
         else if (s.p2.x + 1<img.getWidth() && s.p2.y + 1<img.getHeight() && img.getRGB(s.p2.x + 1, s.p2.y + 1) == Color.white.getRGB()) {
             point t = new point(s.p2.x + 1, s.p2.y + 1);
-            testcoef = getCoef(s.p1, t);
-            res = testcoef / coef;
+            ptsmodifcoef = getCoef(s.p1, t);
+            res = ptsmodifcoef / coef;
             if (res > mini && res < max) {
                 img.setRGB(s.p2.x + 1, s.p2.y + 1, Color.BLACK.getRGB());
                 s.p2 = t;
@@ -76,8 +90,8 @@ public class vectplus {
         //Direction ||
         else if (s.p2.y + 1<img.getHeight() && img.getRGB(s.p2.x, s.p2.y + 1) == Color.white.getRGB()) {
             point t = new point(s.p2.x, s.p2.y + 1);
-            testcoef = getCoef(s.p1, t);
-            res = testcoef / coef;
+            ptsmodifcoef = getCoef(s.p1, t);
+            res = ptsmodifcoef / coef;
             if (res > mini && res < max) {
                 img.setRGB(s.p2.x, s.p2.y + 1, Color.BLACK.getRGB());
                 s.p2 = t;
@@ -87,8 +101,8 @@ public class vectplus {
         //Direction /
         else if (s.p2.y + 1<img.getHeight() && s.p2.x - 1>=0 && img.getRGB(s.p2.x - 1, s.p2.y + 1) == Color.white.getRGB()) {
             point t = new point(s.p2.x - 1, s.p2.y + 1);
-            testcoef = getCoef(s.p1, t);
-            res = testcoef / coef;
+            ptsmodifcoef = getCoef(s.p1, t);
+            res = ptsmodifcoef / coef;
             if (res > mini && res < max) {
                 img.setRGB(s.p2.x - 1, s.p2.y + 1, Color.BLACK.getRGB());
                 s.p2 = t;
@@ -100,7 +114,7 @@ public class vectplus {
     //Direction 1- 2\ 3| 4/
 
     /**
-     * Fonction qui regarde dans une directions autour du pixel en argument pour essayer de trouver des segments.
+     * Fonction allant trouver tous les segments de minimum taille depuis le point donné et une direction
      *
      * @param p
      *             point representant le pixel
@@ -108,8 +122,10 @@ public class vectplus {
      *              Direction dans laquelle la fonction doit regarder s'il y a un segment.
      * @param imgmodif
      *              Copie de l'image cible.
+     * @param it
+     *              la longueur du segment actuelle
      * @return
-     *              Retourne le point blanc consequtif a minimum  reprise du point d'origine
+     *              Retourne le point blanc a minimum point du point d'origine
      */
 
     public void parcours (point p, int dir, BufferedImage imgmodif , int it)
@@ -156,7 +172,7 @@ public class vectplus {
                         break;
                 }
             }
-            else this.test = p2;
+            else this.ptsmodif = p2;
         }
     }
 
@@ -192,7 +208,7 @@ public class vectplus {
     /**
      * Fonction principale de la vectorisation.
      * @return
-     *              Renvoie l'image vectorisée
+     *              Renvoie l'image vectorisée par calcule de coefficient de courbe a chaque point
      * @throws IOException Pour l'ouverture de l'image
      */
     public BufferedImage vectoristation() throws IOException {
@@ -207,44 +223,46 @@ public class vectplus {
                     point dep = new point(i,j);
                     segment s;
                     if (copyvect.getRGB(i + 1, j) == Color.white.getRGB()) {
-                        this.test=null;
+                        this.ptsmodif=null;
                         this.parcours(dep, 1, copyvect ,1 );
-                        if(this.test!=null)
+                        //Permet de verifié si le segement n'est pas trop petit
+                        if(this.ptsmodif!=null)
                         {
-                            s=new segment(dep,this.test);
+                            s=new segment(dep,this.ptsmodif);
+                            //Calcule un segement moins naif
                             suitvec(s,copyvect);
                             this.listvect.add(s);
                             copyvect.setRGB(s.p2.x, s.p2.y, Color.WHITE.getRGB());
                         }
                     }
                     if (copyvect.getRGB(i + 1, j + 1) == Color.white.getRGB()) {
-                        this.test=null;
+                        this.ptsmodif=null;
                         this.parcours(new point(i, j), 2, copyvect,1);
-                        if(this.test!=null)
+                        if(this.ptsmodif!=null)
                         {
-                            s=new segment(dep,this.test);
+                            s=new segment(dep,this.ptsmodif);
                             suitvec(s,copyvect);
                             this.listvect.add(s);
                             copyvect.setRGB(s.p2.x, s.p2.y, Color.WHITE.getRGB());
                         }
                     }
                     if (copyvect.getRGB(i, j + 1) == Color.white.getRGB()) {
-                        this.test=null;
+                        this.ptsmodif=null;
                         this.parcours(new point(i, j), 3, copyvect,1);
-                        if(this.test!=null)
+                        if(this.ptsmodif!=null)
                         {
-                            s=new segment(dep,this.test);
+                            s=new segment(dep,this.ptsmodif);
                             suitvec(s,copyvect);
                             this.listvect.add(s);
                             copyvect.setRGB(s.p2.x, s.p2.y, Color.WHITE.getRGB());
                         }
                     }
                     if (copyvect.getRGB(i - 1, j + 1) == Color.white.getRGB()) {
-                        this.test=null;
+                        this.ptsmodif=null;
                         this.parcours(new point(i, j), 4, copyvect,1);
-                        if(this.test!=null)
+                        if(this.ptsmodif!=null)
                         {
-                            s=new segment(dep,this.test);
+                            s=new segment(dep,this.ptsmodif);
                             suitvec(s,copyvect);
                             this.listvect.add(s);
                             copyvect.setRGB(s.p2.x, s.p2.y, Color.WHITE.getRGB());
@@ -253,17 +271,11 @@ public class vectplus {
                 }
             }
         }
-        int h=0;
-        for (int i = 1; i < img.getImg().getWidth()-1 ; i++) {
-            for (int j = 0; j < img.getImg().getHeight() - 1; j++) {
-                if (copyvect.getRGB(i, j + 1) == Color.white.getRGB())
-                   h++;
-            }
-        }
-        System.out.println(h);
 
 
-        File image = new File("test.svg");
+        //Ecriture fichier .svg
+
+        File image = new File("ptsmodif.svg");
 
         if(!image.exists())
         {
@@ -281,16 +293,9 @@ public class vectplus {
 
 
 
-        /*vg xmlns="http://www.w3.org/2000/svg" version="1.1">
-  <rect x="25" y="25" width="200" height="200" fill="lime" stroke-width="4" stroke="pink" />
-  <circle cx="125" cy="125" r="75" fill="orange" />
-  <polyline points="50,150 50,200 200,200 200,100" stroke="red" stroke-width="4" fill="none" />
-  <line x1="50" y1="50" x2="200" y2="200" stroke="blue" stroke-width="4" />*/
-
         bw.write("</svg>");
         bw.close();
 
-        System.out.println(this.listvect.size());
         return copyvect;
     }
 
