@@ -91,9 +91,9 @@ public class ZFenetre extends JFrame {
         setTitle("Projet BOUYA");
 
         //Ajout d'une favicon
-        File tmp = new File("favicon.jpg");
+        /*File tmp = new File("favicon.jpg");
         Image favicon = ImageIO.read(tmp);
-        this.setIconImage((Image) favicon);
+        this.setIconImage((Image) favicon);*/
         pan = new JPanel();
 
         //Gestion fenetre choix filtre au lancement
@@ -132,7 +132,7 @@ public class ZFenetre extends JFrame {
                             setFiltre(filtreR);
                             break;
 
-            case "Vectorisation": vect v = new vect(this.curFile);
+            case "Vectorisation": vectnaive v = new vectnaive(this.curFile);
                                     v.vectoristation();
                                     filtreActuel = "Roberts";
                                     this.imgFiltre = v.getImgCopy();
@@ -291,9 +291,9 @@ public class ZFenetre extends JFrame {
                     break;
 
                 case "Vectorisation":
-                    vect v = null;
+                    vectnaive v = null;
                     try {
-                        v = new vect(this.curFile);
+                        v = new vectnaive(this.curFile);
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -384,7 +384,7 @@ public class ZFenetre extends JFrame {
 
             try {
                 pan.removeAll();
-                vect t = new vect(this.curFile);
+                vectnaive t = new vectnaive(this.curFile);
                 t.vectoristation();
                 img = new JLabel(new ImageIcon(t.getImgCopy()));
                 pan.add(img);
