@@ -1,8 +1,7 @@
 #Logiciel d'Application de Filtre sur Image 
-## Projet de Programmation Objet L3
-
 -----------------------------------------------
 
+## Projet de Programmation Objet L3
 Ce projet est utilisable par interface graphique simple et intégré. 
 Il est possible d'appliquer : 
   - Le filtre Sobel 
